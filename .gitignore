@@ -1,0 +1,6 @@
+# Build scratch and artifacts — never commit these.
+work/
+cache/
+out/
+*.iso
+build.log

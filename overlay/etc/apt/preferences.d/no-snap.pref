@@ -1,0 +1,6 @@
+# Flubuntu: never install snapd, even as a dependency. Delivered into the live
+# rootfs so the block is present on the very first apt run and persists after
+# installation.
+Package: snapd
+Pin: release a=*
+Pin-Priority: -10
