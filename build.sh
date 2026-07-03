@@ -185,6 +185,9 @@ log "Regenerating md5sum.txt"
 # ---------------------------------------------------------------- 6. build ISO
 log "Building $OUTPUT_ISO"
 mkdir -p "$(dirname "$OUTPUT_ISO")"
+# xorriso refuses to write an existing non-empty -outdev that differs from
+# -indev; drop any stale output from a previous build first.
+rm -f "$OUTPUT_ISO"
 # Load the source ISO for its exact boot records, replay them, and overwrite the
 # tree with our modified files. This preserves UEFI + BIOS boot without having
 # to reconstruct El-Torito/GRUB by hand.

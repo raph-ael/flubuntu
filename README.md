@@ -18,8 +18,15 @@ remaster, not a from-scratch distribution.
 ## How it works
 
 `build.sh` is "Cubic as code": it unpacks the official ISO, runs the `chroot/*.sh`
-steps inside the rootfs (desnap → repos → replace → brand → clean), repacks, and
-rebuilds a bootable ISO with `xorriso`.
+steps inside the rootfs (desnap → repos → replace → brand → dock → clean), repacks,
+and rebuilds a bootable ISO with `xorriso`.
+
+**Desktop:** Ubuntu's built-in dock (`ubuntu-dock`, a Dash to Dock fork) is
+reconfigured by default (`chroot/35-dock.sh`) from a full-height left panel that
+intellihides behind windows into a **visible, floating, bottom-centered dock** —
+via a `90_flubuntu-dock.gschema.override` that overrides Ubuntu's defaults under
+the `:ubuntu` gsettings profile. No extra extension is installed; users can still
+tweak it in Settings.
 
 Ubuntu 26.04 ships a **layered** squashfs set in `casper/`. All the snap machinery
 (`snapd`, the Firefox snap + its transitional deb, `snap-store`, `firmware-updater`,
