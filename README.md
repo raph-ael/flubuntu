@@ -41,6 +41,13 @@ choices that were needed for 26.04's Calamares (3.3.14):
 - the built-in `initramfs` module is dropped (it passes an unsupported `-t` to
   `update-initramfs`); the initramfs is regenerated from the `shellprocess` module.
 
+**GDM login loop (`chroot/45-loginfix.sh`):** on the installed system, Ubuntu
+26.04's GDM greeter (a transient `gdm-greeter` user) leaves `/tmp/.X11-unix` owned
+by itself, so the logged-in user's XWayland refuses it and the GNOME session
+aborts — you get bounced back to the login screen (the *password* is fine; it
+works on a TTY). Flubuntu ships a `pam_exec` hook on `gdm-password` that
+re-asserts `root:root 1777` on `/tmp/.X11-unix` before each session starts.
+
 **Desktop:** Ubuntu's built-in dock (`ubuntu-dock`, a Dash to Dock fork) is
 reconfigured by default (`chroot/35-dock.sh`) from a full-height left panel that
 intellihides behind windows into a **visible, floating, bottom-centered dock** —

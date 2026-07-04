@@ -1,0 +1,10 @@
+#!/bin/sh
+# Ubuntu 26.04's GDM greeter runs as a transient "gdm-greeter" user (a high,
+# namespaced uid) and its XWayland ends up OWNING /tmp/.X11-unix. When a real
+# user then logs in, mutter/XWayland refuses that directory (it must be owned by
+# root or the logging-in user), the GNOME session aborts, and GDM bounces you
+# back to the login screen. Re-assert root ownership at each graphical login;
+# this runs from a pam_exec hook in /etc/pam.d/gdm-password, as root, just before
+# the user session starts.
+test -d /tmp/.X11-unix && chown 0:0 /tmp/.X11-unix && chmod 1777 /tmp/.X11-unix
+exit 0
