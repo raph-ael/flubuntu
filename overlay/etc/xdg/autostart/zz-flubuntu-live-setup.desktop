@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Flubuntu live session setup
+Exec=/usr/local/bin/flubuntu-live-setup
+NoDisplay=true
+X-GNOME-Autostart-enabled=true
+OnlyShowIn=GNOME;Unity;

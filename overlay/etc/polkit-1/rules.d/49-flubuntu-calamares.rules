@@ -1,0 +1,10 @@
+// Flubuntu: let the live-session user launch the Calamares installer via
+// pkexec without a password prompt (the live user has no password). Scoped to
+// the exact wrapper program and to an active, local session.
+polkit.addRule(function(action, subject) {
+    if (action.id == "org.freedesktop.policykit.exec" &&
+        action.lookup("program") == "/usr/local/sbin/flubuntu-calamares" &&
+        subject.active && subject.local) {
+        return polkit.Result.YES;
+    }
+});

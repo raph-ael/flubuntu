@@ -1,0 +1,34 @@
+---
+componentName:  flubuntu
+
+welcomeStyleCalamares:   true
+welcomeExpandingLogo:    true
+windowExpanding:         normal
+windowSize:              800px,520px
+windowPlacement:         center
+
+strings:
+    productName:         Flubuntu
+    shortProductName:    Flubuntu
+    version:             26.04 LTS
+    shortVersion:        26.04
+    versionedName:       Flubuntu 26.04 LTS
+    shortVersionedName:  Flubuntu 26.04
+    bootloaderEntryName:  Flubuntu
+    productUrl:          https://github.com/raph-ael/flubuntu
+    supportUrl:          https://github.com/raph-ael/flubuntu/issues
+    releaseNotesUrl:     https://github.com/raph-ael/flubuntu
+
+images:
+    productLogo:         "logo.png"
+    productIcon:         "logo.png"
+    productWelcome:      "welcome.png"
+
+slideshow:               "show.qml"
+slideshowAPI: 2
+
+style:
+    sidebarBackground:    "#2c001e"
+    sidebarText:          "#ffffff"
+    sidebarTextSelect:    "#e95420"
+    sidebarTextHighlight: "#e95420"

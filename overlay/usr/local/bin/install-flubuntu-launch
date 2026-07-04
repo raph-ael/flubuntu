@@ -1,0 +1,9 @@
+#!/bin/sh
+# Runs as the live user. Hands the current display environment to the root-side
+# Calamares wrapper via pkexec (pkexec scrubs the environment, so we pass the
+# display bits explicitly as arguments instead of relying on env passthrough).
+exec pkexec /usr/local/sbin/flubuntu-calamares \
+    "${DISPLAY:-:0}" \
+    "${XAUTHORITY:-$HOME/.Xauthority}" \
+    "${WAYLAND_DISPLAY:-}" \
+    "${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"

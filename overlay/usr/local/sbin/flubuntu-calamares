@@ -1,0 +1,11 @@
+#!/bin/sh
+# Runs as root (via pkexec). Restores the caller's display environment and
+# launches Calamares. Force the X (xcb) backend so it works under both X11 and
+# Wayland (through XWayland) when running as root.
+export DISPLAY="$1"
+export XAUTHORITY="$2"
+[ -n "$3" ] && export WAYLAND_DISPLAY="$3"
+export XDG_RUNTIME_DIR="$4"
+shift 4
+export QT_QPA_PLATFORM=xcb
+exec calamares "$@"

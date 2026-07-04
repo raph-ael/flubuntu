@@ -10,6 +10,7 @@ replaced by a **deb** or **Flatpak**:
 | Thunderbird | Thunderbird **deb** (Mozilla APT repo) |
 | App Center (`snap-store`) | **GNOME Software** (+ Flatpak & deb plugins) |
 | Firmware Updater | **fwupd** deb |
+| Installer (`ubuntu-desktop-bootstrap`) | **Calamares** deb |
 | misc GNOME apps | **Flatpak** from Flathub |
 
 It stays on Ubuntu's standard repositories for system updates — this is a
@@ -18,8 +19,27 @@ remaster, not a from-scratch distribution.
 ## How it works
 
 `build.sh` is "Cubic as code": it unpacks the official ISO, runs the `chroot/*.sh`
-steps inside the rootfs (desnap → repos → replace → brand → dock → clean), repacks,
-and rebuilds a bootable ISO with `xorriso`.
+steps inside the rootfs (desnap → repos → replace → **installer** → brand → dock →
+clean), repacks, and rebuilds a bootable ISO with `xorriso`.
+
+**Installer:** Ubuntu 26.04's desktop installer (`ubuntu-desktop-bootstrap`) ships
+**only as a classic snap**, so removing `snapd` removes the installer too. Flubuntu
+replaces it with **Calamares** (deb, `chroot/25-installer.sh`), fully configured and
+branded under `overlay/etc/calamares/`. A live-session launcher ("Install Flubuntu"
+desktop icon + app-grid entry) runs it via `pkexec` (a polkit rule under
+`overlay/etc/polkit-1/` lets the passwordless live user launch it); an autostart
+script removes the dead snap-installer icon. Calamares installs the snap-free
+`minimal.squashfs`, installs a GRUB **EFI + BIOS** bootloader, regenerates the
+initramfs, and removes itself from the target — verified end-to-end (erase-disk
+install → reboot → boots to GDM; the installed system has no `snapd`). Key config
+choices that were needed for 26.04's Calamares (3.3.14):
+- `partition.conf` uses an explicit `partitionLayout` (the default auto-layout
+  created only an ESP);
+- `mount.conf` is required (the bare `calamares` deb ships no default configs) and
+  its `options` must be an **array** (`options: [ bind ]`) so `/dev` etc. reach the
+  chroot for `grub-install`;
+- the built-in `initramfs` module is dropped (it passes an unsupported `-t` to
+  `update-initramfs`); the initramfs is regenerated from the `shellprocess` module.
 
 **Desktop:** Ubuntu's built-in dock (`ubuntu-dock`, a Dash to Dock fork) is
 reconfigured by default (`chroot/35-dock.sh`) from a full-height left panel that
@@ -41,7 +61,8 @@ thin `minimal.standard` diff layer (which is where the Thunderbird snap lived).
 build.sh              orchestrator (run as root)
 config/flubuntu.conf  version, ISO URL + SHA256, labels
 chroot/               steps run INSIDE the chroot, in numeric order
-overlay/              files copied verbatim into the rootfs (the snap block)
+overlay/              files copied verbatim into the rootfs (snap block,
+                        Calamares config under etc/calamares, live launcher)
 branding/             wallpaper + Plymouth theme (add your own)
 scripts/test-vm.sh    boot the result in QEMU (UEFI + BIOS)
 ```
@@ -92,4 +113,6 @@ In the live session:
 
 ## Not included (by scope)
 
-Own APT repo / maintained update stream, custom installer, Secure Boot signing.
+Own APT repo / maintained update stream, Secure Boot signing (shim is shipped so
+UEFI installs boot, but nothing is signed with a custom key), swap (the installer
+defaults to no swap — a root-only layout).

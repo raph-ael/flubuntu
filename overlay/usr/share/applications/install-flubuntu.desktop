@@ -1,0 +1,15 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Install Flubuntu
+Name[de]=Flubuntu installieren
+GenericName=System Installer
+GenericName[de]=Systeminstallation
+Comment=Install Flubuntu to your computer
+Comment[de]=Flubuntu auf dem Computer installieren
+Exec=/usr/local/bin/install-flubuntu-launch
+Icon=system-software-install
+Terminal=false
+StartupNotify=true
+Categories=System;
+Keywords=calamares;install;installer;flubuntu;

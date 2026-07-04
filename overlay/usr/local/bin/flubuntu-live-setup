@@ -1,0 +1,36 @@
+#!/bin/sh
+# Runs once per live-session login (GNOME autostart). Live-session ONLY: on an
+# installed system this file is removed by Calamares' shellprocess module, and
+# the /cdrom/casper guard below makes it a no-op even if it lingers.
+set -eu
+
+# Only act inside the casper live medium.
+[ -d /cdrom/casper ] || [ -e /run/live/medium ] || exit 0
+
+DESK="$(xdg-user-dir DESKTOP 2>/dev/null || echo "$HOME/Desktop")"
+mkdir -p "$DESK"
+
+# 1) Remove the dead Ubuntu snap-installer launcher (Exec=/snap/bin/... — snapd
+#    is gone in Flubuntu, so this icon does nothing).
+rm -f "$DESK"/*ubuntu-desktop-bootstrap*.desktop "$DESK"/*bootstrap*.desktop 2>/dev/null || true
+
+# 2) Drop our working "Install Flubuntu" launcher on the desktop, trusted so
+#    GNOME's desktop-icons extension lets it launch without the warning prompt.
+SRC=/usr/share/applications/install-flubuntu.desktop
+if [ -f "$SRC" ]; then
+    cp -f "$SRC" "$DESK/install-flubuntu.desktop"
+    chmod +x "$DESK/install-flubuntu.desktop"
+    gio set "$DESK/install-flubuntu.desktop" metadata::trusted true 2>/dev/null || true
+fi
+
+# 3) Pin the installer to the dock for the live session.
+CUR="$(gsettings get org.gnome.shell favorite-apps 2>/dev/null || echo "@as []")"
+case "$CUR" in
+    *install-flubuntu.desktop*) : ;;
+    *)
+        NEW="$(printf '%s' "$CUR" | sed "s/]$/, 'install-flubuntu.desktop']/; s/^@as \[\]$/['install-flubuntu.desktop']/")"
+        gsettings set org.gnome.shell favorite-apps "$NEW" 2>/dev/null || true
+        ;;
+esac
+
+exit 0
